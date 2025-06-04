@@ -42,7 +42,17 @@ const upload = multer({
 });
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'https://lepdo.co.in',
+    'http://localhost:3000', // for local development
+    // add other domains as needed
+  ],
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+};
+app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
