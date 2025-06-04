@@ -397,7 +397,7 @@ function showDeleteConfirmation(quotationId) {
 async function deleteQuotation(quotationId) {
     elements.loadingSpinner.style.display = 'flex';
     try {
-        const response = await fetch(`https://lepdo-quotation-system-deploy.onrender.com/api/metadata/${quotationId}`, {
+        const response = await fetch(`https://lepdo-quotation-management-system.onrender.com/api/metadata/${quotationId}`, {
             method: 'DELETE'
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -537,7 +537,7 @@ function loadTheme() {
 async function fetchQuotations() {
     elements.loadingSpinner.style.display = 'flex';
     try {
-        const response = await fetch('https://lepdo-quotation-system-deploy.onrender.com/api/metadata');
+        const response = await fetch('https://lepdo-quotation-management-system.onrender.com/api/metadata');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         quotations = await response.json();
         quotations.sort(sortByDateNewestFirst);
