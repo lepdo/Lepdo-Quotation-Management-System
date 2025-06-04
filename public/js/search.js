@@ -57,7 +57,7 @@ function parseQuotationDate(dateInput) {
     if (typeof dateInput === 'object' && (dateInput._seconds || dateInput.seconds)) {
         const seconds = dateInput._seconds || dateInput.seconds;
         const nanoseconds = dateInput._nanoseconds || dateInput.nanoseconds || 0;
-        return new Date(seconds * 1000 + nanoseconds / 1000000);
+        return new Date(seconds * 100 Juliet 1000 + nanoseconds / 1000000);
     }
 
     if (typeof dateInput === 'string') {
@@ -139,37 +139,37 @@ function exportToExcel(quotation) {
             }]), 'Identification');
 
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-                quotation.metalItems.map(item => ({
-                    Purity: item.purity,
-                    Grams: item.grams,
-                    'Rate/Gram': `₹${item.ratePerGram}`,
-                    'Total Metal': `₹${item.totalMetal}`,
-                    'Making Charges': `₹${item.makingCharges}`
+                (quotation.metalItems?.length > 0 ? quotation.metalItems : []).map(item => ({
+                    Purity: item.purity || 'N/A',
+                    Grams: item.grams || '0',
+                    'Rate/Gram': `₹${item.ratePerGram || '0'}`,
+                    'Total Metal': `₹${item.totalMetal || '0'}`,
+                    'Making Charges': `₹${item.makingCharges || '0'}`
                 }))
             ), 'Metal Items');
 
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-                quotation.diamondItems.length > 0
+                (quotation.diamondItems?.length > 0 ? quotation.diamondItems : []).length > 0
                     ? quotation.diamondItems.map(item => ({
-                        Shape: item.shape,
+                        Shape: item.shape || 'N/A',
                         "Selected MM": item.mm || item.displayMM || 'N/A',
                         'Entered MM': item.userMM || 'N/A',
-                        Pieces: item.pcs,
-                        'Weight/Piece': `${item.weightPerPiece}ct`,
-                        'Total Weight': `${item.totalWeightCt}ct`,
-                        'Price/Ct': `₹${item.pricePerCt}`,
-                        Total: `₹${item.total}`
+                        Pieces: item.pcs || '0',
+                        'Weight/Piece': `${item.weightPerPiece || '0'}ct`,
+                        'Total Weight': `${item.totalWeightCt || '0'}ct`,
+                        'Price/Ct': `₹${item.pricePerCt || '0'}`,
+                        Total: `₹${item.total || '0'}`
                     }))
                     : [{ Message: 'No diamond items' }]
             ), 'Diamond Items');
 
             XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(
-                quotation.summary.metalSummary.map(item => ({
-                    Description: item.purity,
-                    'Metal Amount': `₹${item.totalMetal}`,
-                    'Making Charges': `₹${item.makingCharges}`,
-                    'Diamond Amount': `₹${item.totalDiamondAmount}`,
-                    Total: `₹${item.total}`
+                (quotation.summary?.metalSummary?.length > 0 ? quotation.summary.metalSummary : []).map(item => ({
+                    Description: item.purity || 'N/A',
+                    'Metal Amount': `₹${item.totalMetal || '0'}`,
+                    'Making Charges': `₹${item.makingCharges || '0'}`,
+                    'Diamond Amount': `₹${item.totalDiamondAmount || '0'}`,
+                    Total: `₹${item.total || '0'}`
                 }))
             ), 'Summary');
 
@@ -280,49 +280,59 @@ function openModal(quotation) {
     elements.modalCategory.textContent = quotation.identification.category;
     elements.modalDate.textContent = formatDate(quotation.quotationDate);
 
-    elements.metalTableBody.innerHTML = quotation.metalItems.map(item => `
-        <tr>
-            <td>${item.purity}</td>
-            <td>${item.grams}g</td>
-            <td>₹${item.ratePerGram}</td>
-            <td>₹${item.totalMetal}</td>
-            <td>₹${item.makingCharges}</td>
-        </tr>
-    `).join('');
+    elements.metalTableBody.innerHTML = quotation.metalItems?.length > 0
+        ? quotation.metalItems.map(item => `
+            <tr>
+                <td>${item.purity || 'N/A'}</td>
+                <td>${item.grams || '0'}g</td>
+                <td>₹${item.ratePerGram || '0'}</td>
+                <td>₹${item.totalMetal || '0'}</td>
+                <td>₹${item.makingCharges || '0'}</td>
+            </tr>
+        `).join('')
+        : '<tr><td colspan="5" style="text-align: center;">No metal items</td></tr>';
 
-    elements.diamondTableBody.innerHTML = quotation.diamondItems.length > 0
+    elements.diamondTableBody.innerHTML = quotation.diamondItems?.length > 0
         ? quotation.diamondItems.map(item => `
             <tr>
-                <td>${item.shape}</td>
+                <td>${item.shape || 'N/A'}</td>
                 <td>${item.mm || 'N/A'}</td>
                 <td>${item.userMM || item.mm || 'N/A'}</td>
-                <td>${item.pcs}</td>
-                <td>${item.weightPerPiece}ct</td>
-                <td>${item.totalWeightCt}ct</td>
-                <td>₹${item.pricePerCt}</td>
-                <td>₹${item.total}</td>
+                <td>${item.pcs || '0'}</td>
+                <td>${item.weightPerPiece || '0'}ct</td>
+                <td>${item.totalWeightCt || '0'}ct</td>
+                <td>₹${item.pricePerCt || '0'}</td>
+                <td>₹${item.total || '0'}</td>
             </tr>
         `).join('')
         : '<tr><td colspan="8" style="text-align: center;">No diamond items</td></tr>';
 
-    const totalMetalAmount = quotation.metalItems.reduce((sum, item) => sum + Number(item.totalMetal || 0), 0).toFixed(2);
-    const totalMakingCharges = quotation.metalItems.reduce((sum, item) => sum + Number(item.makingCharges || 0), 0).toFixed(2);
-    const metalPurities = quotation.metalItems.map(item => item.purity).join(', ');
+    const totalMetalAmount = quotation.metalItems?.length > 0
+        ? quotation.metalItems.reduce((sum, item) => sum + Number(item.totalMetal || 0), 0).toFixed(2)
+        : '0.00';
+    const totalMakingCharges = quotation.metalItems?.length > 0
+        ? quotation.metalItems.reduce((sum, item) => sum + Number(item.makingCharges || 0), 0).toFixed(2)
+        : '0.00';
+    const metalPurities = quotation.metalItems?.length > 0
+        ? quotation.metalItems.map(item => item.purity || 'N/A').join(', ')
+        : 'N/A';
 
     elements.modalMetalAmount.textContent = `₹${totalMetalAmount}`;
     elements.modalMakingCharges.textContent = `₹${totalMakingCharges}`;
     elements.modalPurities.textContent = metalPurities;
-    elements.modalDiamondAmount.textContent = `₹${quotation.summary.totalDiamondAmount}`;
+    elements.modalDiamondAmount.textContent = `₹${quotation.summary?.totalDiamondAmount || '0'}`;
 
-    elements.summaryTableBody.innerHTML = quotation.summary.metalSummary.map(item => `
-        <tr>
-            <td>${item.purity}</td>
-            <td>₹${item.totalMetal}</td>
-            <td>₹${item.makingCharges}</td>
-            <td>₹${item.totalDiamondAmount}</td>
-            <td>₹${item.total}</td>
-        </tr>
-    `).join('');
+    elements.summaryTableBody.innerHTML = quotation.summary?.metalSummary?.length > 0
+        ? quotation.summary.metalSummary.map(item => `
+            <tr>
+                <td>${item.purity || 'N/A'}</td>
+                <td>₹${item.totalMetal || '0'}</td>
+                <td>₹${item.makingCharges || '0'}</td>
+                <td>₹${item.totalDiamondAmount || '0'}</td>
+                <td>₹${item.total || '0'}</td>
+            </tr>
+        `).join('')
+        : '<tr><td colspan="5" style="text-align: center;">No summary data</td></tr>';
 
     const modalFooter = document.querySelector('.modal-footer');
     let downloadBtn = modalFooter.querySelector('.download-btn');
@@ -456,7 +466,7 @@ function filterQuotationsData() {
             q.identification.idSku,
             q.identification.category,
             q.quotationId,
-            q.metalItems.map(item => item.purity).join(', ')
+            (q.metalItems?.length > 0 ? q.metalItems.map(item => item.purity).join(', ') : '')
         ].some(field => field.toLowerCase().includes(searchTerm));
 
         const matchesCategory = !category || q.identification.category === category;
@@ -494,7 +504,7 @@ function showSuggestions() {
     const matches = quotations.reduce((acc, q) => {
         if (q.identification.idSku.toLowerCase().includes(term)) acc.push(`SKU: ${q.identification.idSku}`);
         if (q.identification.category.toLowerCase().includes(term)) acc.push(`Category: ${q.identification.category}`);
-        if (q.metalItems.some(item => item.purity.toLowerCase().includes(term))) acc.push(`Metal: ${q.metalItems.map(item => item.purity).join(', ')}`);
+        if (q.metalItems?.some(item => item.purity.toLowerCase().includes(term))) acc.push(`Metal: ${q.metalItems.map(item => item.purity).join(', ')}`);
         if (q.quotationId.toLowerCase().includes(term)) acc.push(`Quotation ID: ${q.quotationId}`);
         return acc;
     }, []);
@@ -539,7 +549,8 @@ async function fetchQuotations() {
     try {
         const response = await fetch('https://lepdo-quotation-management-system.onrender.com/api/metadata');
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-        quotations = await response.json();
+        const data = await response.json();
+        quotations = Array.isArray(data.quotations) ? data.quotations : [];
         quotations.sort(sortByDateNewestFirst);
         cachedFilteredData = null;
         renderCards(quotations.slice(0, displayedCards));
