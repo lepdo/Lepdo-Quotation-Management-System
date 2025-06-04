@@ -28,9 +28,9 @@ app.use(cors({
             callback(new Error('Not allowed by CORS'));
         }
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true // If your frontend sends credentials (e.g., cookies)
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'], // Include all common HTTP methods
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'], // Allow Authorization and other common headers
+    credentials: false // Explicitly disable credentials (no cookies or auth credentials required)
 }));
 
 // Construct service account credentials from environment variables
