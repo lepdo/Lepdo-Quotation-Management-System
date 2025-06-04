@@ -7,7 +7,7 @@ const elements = {
     skuFilter: document.getElementById('sku-filter'),
     dateFrom: document.getElementById('date-from'),
     dateTo: document.getElementById('date-to'),
-    resetFiltersBtn: document.getElementById('reset-filters'),
+    resetFiltersBtn: document.getElementById('reset-filtfeers'),
     detailModal: document.getElementById('detail-modal'),
     modalImg: document.getElementById('modal-img'),
     modalTitle: document.getElementById('modal-title'),
@@ -397,7 +397,7 @@ function showDeleteConfirmation(quotationId) {
 async function deleteQuotation(quotationId) {
     elements.loadingSpinner.style.display = 'flex';
     try {
-        const response = await fetch(`https://lepdo-quotation-system-deploy.onrender.com/api/metadata/${quotationId}`, {
+        const response = await fetch(`https://lepdo-quotation-management-system.onrender.com/api/metadata/${quotationId}`, {
             method: 'DELETE'
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -542,7 +542,7 @@ function loadTheme() {
 async function fetchQuotations() {
     elements.loadingSpinner.style.display = 'flex';
     try {
-        const response = await fetch('https://lepdo-quotation-system-deploy.onrender.com/api/metadata', {
+        const response = await fetch('https://lepdo-quotation-management-system.onrender.com/api/metadata', {
             headers: { 'Cache-Control': 'no-cache' }
         });
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
