@@ -40,7 +40,14 @@ const upload = multer({
     storage: multer.memoryStorage(),
     limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
-
+// Add this middleware before your routes
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', 'https://lepdo.co.in');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.header('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 // Middleware
 const corsOptions = {
   origin: [
@@ -99,7 +106,8 @@ async function getNextId(counterName) {
         return nextId;
     });
 }
-
+// Add this before your routes
+app.options('*', cors(corsOptions)); // Enable preflight for all routes
 // Updated endpoint to handle image uploads to GitHub with compression
 app.post('/api/upload-image', upload.array('images'), async (req, res) => {
     try {
