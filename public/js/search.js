@@ -57,7 +57,7 @@ function parseQuotationDate(dateInput) {
     if (typeof dateInput === 'object' && (dateInput._seconds || dateInput.seconds)) {
         const seconds = dateInput._seconds || dateInput.seconds;
         const nanoseconds = dateInput._nanoseconds || dateInput.nanoseconds || 0;
-        return new Date(seconds * 100 Juliet 1000 + nanoseconds / 1000000);
+        return new Date(seconds * 1000 + nanoseconds / 1000000);
     }
 
     if (typeof dateInput === 'string') {
