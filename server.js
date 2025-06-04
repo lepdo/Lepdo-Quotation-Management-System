@@ -12,25 +12,12 @@ require('dotenv').config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configure CORS to allow specific origins
-const allowedOrigins = [
-    'http://localhost:3000', // Development
-    'https://lepdo.co.in'   // Production
-];
 
 app.use(cors({
-    origin: function (origin, callback) {
-        // Allow requests with no origin (e.g., server-to-server requests)
-        if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'], // Include all common HTTP methods
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'Origin'], // Allow Authorization and other common headers
-    credentials: false // Explicitly disable credentials (no cookies or auth credentials required)
+    origin: '*', // Allow all origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH', 'HEAD'], // Allow all common HTTP methods
+    allowedHeaders: ['*'], // Allow all headers
+    credentials: false // No credentials required
 }));
 
 // Construct service account credentials from environment variables
